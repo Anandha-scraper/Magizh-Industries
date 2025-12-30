@@ -11,7 +11,6 @@ const Entry = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
@@ -63,17 +62,6 @@ const Entry = () => {
         material: material
       }
     });
-  };
-
-  const handleCloseModal = () => {
-    setIsSelectModalOpen(false);
-    setSelectedMaterial(null);
-  };
-
-  const handleConfirmSelect = async () => {
-    // TODO: Implement entry logic here
-    alert('Material selected for entry. Entry form will be implemented next.');
-    handleCloseModal();
   };
 
   return (

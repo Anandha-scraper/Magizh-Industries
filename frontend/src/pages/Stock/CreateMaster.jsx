@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Dropdown } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
 import Sidebar from '../../components/Sidebar';
 import Navbar from '../../components/Navbar';
 import '../../styles/pageStyles/Stock/CreateMaster.css';
@@ -19,7 +21,7 @@ const CreateMaster = () => {
     igst: '',
     sgst: '',
     costPerItem: '',
-    unit: ''
+    unit: 'EA'
   });
 
   const [gstError, setGstError] = useState({
@@ -162,8 +164,8 @@ const CreateMaster = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Check if required fields are empty
-    if (!formData.materialFlow || !formData.class || !formData.category || !formData.materialName) {
+    // Check if required fields are empty (including unit)
+    if (!formData.materialFlow || !formData.class || !formData.category || !formData.materialName || !formData.unit) {
       setShowRequiredError(true);
       setShowPrimaryFieldError(true);
       setShowGstError(false);
@@ -213,7 +215,7 @@ const CreateMaster = () => {
         if (response.ok) {
           setShowGstError(false);
           setShowRequiredError(false);
-          alert('Material master created successfully!');
+          alert('Material Master created successfully!');
           handleReset();
         } else {
           alert(data.message || 'Failed to create material master');
@@ -240,7 +242,7 @@ const CreateMaster = () => {
       igst: '',
       sgst: '',
       costPerItem: '',
-      unit: ''
+      unit: 'EA'
     });
 
     // Reset error states
@@ -280,49 +282,32 @@ const CreateMaster = () => {
               <div className="form-grid">
                 <div className="form-group">
                   <label htmlFor="materialFlow">Material Flow <span className="required">*</span></label>
-                  <select
-                    id="materialFlow"
-                    name="materialFlow"
-                    value={formData.materialFlow}
-                    onChange={handleChange}
-                    required
-                    className={`${primaryFieldError.materialFlow ? 'error-input' : ''}`}
+                  <Dropdown
+                    title={formData.materialFlow || "Select material flow"}
+                    onSelect={(value) => handleChange({ target: { name: 'materialFlow', value } })}
+                    className={`rsuite-dropdown ${primaryFieldError.materialFlow ? 'error-input' : ''}`}
                   >
-                    <option value="" disabled hidden>Select material flow</option>
-                    <option value="BOM">BOM</option>
-                    <option value="FIN">FIN</option>
-                  </select>
+                    <Dropdown.Item eventKey="BOM">BOM</Dropdown.Item>
+                    <Dropdown.Item eventKey="FIN">FIN</Dropdown.Item>
+                  </Dropdown>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="class">Class <span className="required">*</span></label>
-                  <select
-                    id="class"
-                    name="class"
-                    value={formData.class}
-                    onChange={handleChange}
-                    required
+                  <Dropdown
+                    title={formData.class || "Select class"}
+                    onSelect={(value) => handleChange({ target: { name: 'class', value } })}
                     disabled={formData.materialFlow === 'FIN'}
-                    className={`${primaryFieldError.class ? 'error-input' : ''}`}
+                    className={`rsuite-dropdown ${primaryFieldError.class ? 'error-input' : ''} ${formData.materialFlow === 'FIN' ? 'disabled-dropdown' : ''}`}
                   >
-                    <option value="" disabled hidden>Select class</option>
-                    {formData.materialFlow === 'BOM' ? (
-                      <>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
-                        <option value="D">D</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
-                        <option value="D">D</option>
-                        <option value="F">F</option>
-                      </>
+                    <Dropdown.Item eventKey="A">A</Dropdown.Item>
+                    <Dropdown.Item eventKey="B">B</Dropdown.Item>
+                    <Dropdown.Item eventKey="C">C</Dropdown.Item>
+                    <Dropdown.Item eventKey="D">D</Dropdown.Item>
+                    {formData.materialFlow !== 'BOM' && (
+                      <Dropdown.Item eventKey="F">F</Dropdown.Item>
                     )}
-                  </select>
+                  </Dropdown>
                 </div>
 
                 <div className="form-group">
@@ -470,18 +455,16 @@ const CreateMaster = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="unit">Unit</label>
-                  <select
-                    id="unit"
-                    name="unit"
-                    value={formData.unit}
-                    onChange={handleChange}
+                  <label htmlFor="unit">Unit <span className="required-asterisk">*</span></label>
+                  <Dropdown
+                    title={formData.unit ? `${formData.unit} (${formData.unit === 'EA' ? 'Each' : formData.unit === 'KG' ? 'Kilogram' : 'Meter'})` : "Select unit"}
+                    onSelect={(value) => handleChange({ target: { name: 'unit', value } })}
+                    className="rsuite-dropdown"
                   >
-                    <option value="" disabled hidden>Select unit</option>
-                    <option value="EA">EA (Each)</option>
-                    <option value="KG">KG (Kilogram)</option>
-                    <option value="M">M (Meter)</option>
-                  </select>
+                    <Dropdown.Item eventKey="EA">EA (Each)</Dropdown.Item>
+                    <Dropdown.Item eventKey="KG">KG (Kilogram)</Dropdown.Item>
+                    <Dropdown.Item eventKey="M">M (Meter)</Dropdown.Item>
+                  </Dropdown>
                 </div>
               </div>
 

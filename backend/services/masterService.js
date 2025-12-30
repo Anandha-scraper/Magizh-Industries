@@ -70,6 +70,7 @@ class MasterService {
       igst: materialData.igst || '',
       sgst: materialData.sgst || '',
       costPerItem: materialData.costPerItem || '',
+      unit: materialData.unit || 'EA',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       createdBy: materialData.createdBy || null,

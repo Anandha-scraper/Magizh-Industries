@@ -2,18 +2,35 @@ const stockEntryService = require('../services/stockEntryService');
 
 const createStockEntry = async (req, res) => {
   try {
+    console.log('Create stock entry request received');
+    console.log('Request body:', req.body);
+    console.log('User:', req.user);
+
+    // Validate required fields
+    if (!req.body.materialCode || !req.body.materialName || !req.body.quantity || !req.body.unit || !req.body.entryType) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields',
+        required: ['materialCode', 'materialName', 'quantity', 'unit', 'entryType']
+      });
+    }
+
     const entryData = {
       materialCode: req.body.materialCode,
       materialName: req.body.materialName,
-      supplierCode: req.body.supplierCode,
-      materialFlow: req.body.materialFlow,
+      supplierCode: req.body.supplierCode || '',
+      materialFlow: req.body.materialFlow || '',
       quantity: parseFloat(req.body.quantity),
       unit: req.body.unit,
       entryType: req.body.entryType,
       createdBy: req.user?.email || 'system'
     };
 
+    console.log('Entry data prepared:', entryData);
+
     const newEntry = await stockEntryService.create(entryData);
+
+    console.log('Stock entry created successfully:', newEntry.id);
 
     res.status(201).json({
       success: true,
@@ -21,10 +38,12 @@ const createStockEntry = async (req, res) => {
       data: newEntry
     });
   } catch (error) {
+    console.error('Error creating stock entry:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create stock entry',
-      error: error.message
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 };

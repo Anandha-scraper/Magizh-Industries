@@ -6,6 +6,118 @@
   --bg-light: #FFF7F1;
 }
 
+/* RSuite Dropdown Custom Styles */
+.rsuite-dropdown {
+  width: 100%;
+}
+
+/* RSuite Dropdown Toggle Button */
+.rsuite-dropdown .rs-dropdown-toggle,
+.rsuite-dropdown .rs-btn {
+  width: 100% !important;
+  padding: 14px 16px !important;
+  border: 2px solid rgba(116, 105, 182, 0.2) !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  color: #333 !important;
+  background: white !important;
+  height: 52px !important;
+  box-sizing: border-box !important;
+  transition: all 0.3s ease !important;
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.rsuite-dropdown .rs-dropdown-toggle:hover,
+.rsuite-dropdown .rs-btn:hover {
+  border-color: var(--primary-light) !important;
+  background-color: rgba(116, 105, 182, 0.02) !important;
+}
+
+.rsuite-dropdown .rs-dropdown-toggle:focus,
+.rsuite-dropdown .rs-btn:focus,
+.rsuite-dropdown .rs-dropdown-toggle:active,
+.rsuite-dropdown .rs-btn:active {
+  outline: none !important;
+  border-color: var(--primary-purple) !important;
+  box-shadow: 0 0 0 3px rgba(116, 105, 182, 0.1) !important;
+  background: white !important;
+}
+
+.rsuite-dropdown.error-input .rs-dropdown-toggle,
+.rsuite-dropdown.error-input .rs-btn {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.rsuite-dropdown.error-input .rs-dropdown-toggle:hover,
+.rsuite-dropdown.error-input .rs-btn:hover {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.rsuite-dropdown.error-input .rs-dropdown-toggle:focus,
+.rsuite-dropdown.error-input .rs-btn:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}
+
+.rsuite-dropdown.disabled-dropdown .rs-dropdown-toggle,
+.rsuite-dropdown.disabled-dropdown .rs-btn,
+.rsuite-dropdown .rs-dropdown-toggle.rs-btn-disabled,
+.rsuite-dropdown .rs-btn.rs-btn-disabled {
+  background-color: #f5f5f5 !important;
+  color: #999 !important;
+  cursor: not-allowed !important;
+  border-color: #e0e0e0 !important;
+  pointer-events: none !important;
+  opacity: 0.6 !important;
+}
+
+/* RSuite Dropdown Menu */
+.rsuite-dropdown .rs-dropdown-menu,
+.rs-picker-popup .rs-dropdown-menu {
+  border: 2px solid rgba(116, 105, 182, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(116, 105, 182, 0.15) !important;
+  padding: 8px !important;
+  background: white !important;
+  min-width: 100% !important;
+  width: 100% !important;
+}
+
+/* RSuite Dropdown Items */
+.rsuite-dropdown .rs-dropdown-item,
+.rs-picker-popup .rs-dropdown-item {
+  padding: 8px 14px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #333 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  margin: 2px 0 !important;
+}
+
+.rsuite-dropdown .rs-dropdown-item:hover,
+.rs-picker-popup .rs-dropdown-item:hover,
+.rsuite-dropdown .rs-dropdown-item:focus,
+.rs-picker-popup .rs-dropdown-item:focus,
+.rsuite-dropdown .rs-dropdown-item.rs-dropdown-item-focus,
+.rs-picker-popup .rs-dropdown-item.rs-dropdown-item-focus {
+  background: var(--primary-purple) !important;
+  color: white !important;
+}
+
+.rsuite-dropdown .rs-dropdown-item-active,
+.rs-picker-popup .rs-dropdown-item-active {
+  background: var(--primary-purple) !important;
+  color: white !important;
+}
+
 /* Stock Container */
 .stock-container {
   display: flex;
@@ -17,7 +129,7 @@
 .stock-container .main-content {
   flex: 1;
   margin-left: 0;
-  padding: 5rem 2rem 1.5rem 2rem;
+  padding: 5rem 2rem 1.5rem 0.5rem;
   transition: margin-left 0.3s ease;
   overflow-y: auto;
 }
@@ -66,11 +178,13 @@
 .form-container {
   background: white;
   border-radius: 15px;
-  padding: 3rem;
+  padding: 3rem ;
+  padding-right: 50px;
+  padding-left: 50px;
   box-shadow: 0 8px 32px rgba(116, 105, 182, 0.12);
   border: 1px solid rgba(116, 105, 182, 0.15);
   margin-top: 1rem;
-  width: 95%;
+  width: 120%;
   max-width: none;
   margin-left: auto;
   margin-right: auto;
@@ -109,7 +223,6 @@
 }
 
 .form-group input,
-.form-group select,
 .form-group textarea {
   padding: 14px 16px;
   border: 2px solid rgba(116, 105, 182, 0.2);
@@ -122,106 +235,7 @@
   width: 100%;
   height: 52px;
   box-sizing: border-box;
-}
-
-.form-group input,
-.form-group textarea {
   cursor: text;
-}
-
-.form-group select {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%237469B6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 20px !important;
-  background-color: white !important;
-  padding-right: 45px;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(116, 105, 182, 0.05);
-  text-indent: 0.01px;
-  text-overflow: '';
-  line-height: normal;
-}
-
-/* Remove default arrow for IE */
-.form-group select::-ms-expand {
-  display: none;
-}
-
-/* Remove default arrow for Firefox */
-.form-group select:-moz-focusring {
-  color: transparent;
-  text-shadow: 0 0 0 #333;
-}
-
-/* Additional cross-browser fixes */
-.form-group select::-webkit-inner-spin-button,
-.form-group select::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.form-group select:hover {
-  border-color: var(--primary-light);
-  background-color: rgba(116, 105, 182, 0.03);
-  box-shadow: 0 4px 12px rgba(116, 105, 182, 0.12);
-  transform: translateY(-1px);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23AD88C6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-}
-
-.form-group select:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(116, 105, 182, 0.18);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%237469B6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-}
-
-.form-group select:active {
-  transform: translateY(0);
-  transition: transform 0.1s ease;
-}
-
-.form-group select option {
-  padding: 14px 16px;
-  background: white;
-  color: #333;
-  font-size: 15px;
-  font-weight: 600;
-  font-style: normal;
-  transition: all 0.2s ease;
-  line-height: 1.6;
-}
-
-.form-group select option:hover,
-.form-group select option:checked {
-  background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-light) 100%);
-  color: white;
-  font-weight: 700;
-}
-
-.form-group select option[value=""] {
-  color: #999;
-  font-weight: 600;
-  font-style: normal;
-}
-
-.form-group select option[value=""]:hover {
-  background: #f5f5f5;
-  color: #666;
-}
-
-.form-group select:invalid {
-  color: #999;
-  font-weight: 500;
-  font-style: normal;
-}
-
-.form-group select:valid {
-  color: #333;
-  font-weight: 600;
 }
 
 .form-group input:hover,
@@ -231,7 +245,6 @@
 }
 
 .form-group input:focus,
-.form-group select:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-purple);
@@ -1177,6 +1190,32 @@
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .form-group select {
+    padding-right: 46px;
+    background-position: right 13px center !important;
+    background-size: 19px !important;
+    min-height: 50px;
+  }
+
+  .form-group select option {
+    padding: 7px 13px;
+    font-size: 14px;
+  }
+
+  .rsuite-dropdown .rs-dropdown-toggle,
+  .rsuite-dropdown .rs-btn {
+    padding: 11px 13px !important;
+    font-size: 14px !important;
+    min-height: 50px !important;
+    height: 50px !important;
+  }
+
+  .rsuite-dropdown .rs-dropdown-item,
+  .rs-picker-popup .rs-dropdown-item {
+    padding: 7px 13px !important;
+    font-size: 14px !important;
+  }
 }
 
 /* Mobile Responsive */
@@ -1226,6 +1265,20 @@
   .form-group {
     gap: 6px;
   }
+
+  .rsuite-dropdown .rs-dropdown-toggle,
+  .rsuite-dropdown .rs-btn {
+    padding: 11px 13px !important;
+    font-size: 14px !important;
+    min-height: 48px !important;
+    height: 48px !important;
+  }
+
+  .rsuite-dropdown .rs-dropdown-item,
+  .rs-picker-popup .rs-dropdown-item {
+    padding: 6px 12px !important;
+    font-size: 14px !important;
+  }
 }
 
 @media (max-width: 575px) {
@@ -1265,13 +1318,37 @@
     height: 44px;
   }
 
+  .form-group select {
+    padding: 10px 12px;
+    padding-right: 40px;
+    background-size: 17px !important;
+    background-position: right 10px center !important;
+    font-size: 13px;
+    min-height: 44px;
+    height: 44px;
+  }
+
   .form-grid {
     gap: 12px 14px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   .form-group {
     gap: 5px;
+  }
+
+  .rsuite-dropdown .rs-dropdown-toggle,
+  .rsuite-dropdown .rs-btn {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+
+  .rsuite-dropdown .rs-dropdown-item,
+  .rs-picker-popup .rs-dropdown-item {
+    padding: 6px 11px !important;
+    font-size: 13px !important;
   }
 }
 
@@ -1305,7 +1382,6 @@
   }
 
   .form-group input,
-  .form-group select,
   .form-group textarea {
     padding: 10px 12px;
     font-size: 12px;
@@ -1319,5 +1395,19 @@
 
   .form-group {
     gap: 4px;
+  }
+
+  .rsuite-dropdown .rs-dropdown-toggle,
+  .rsuite-dropdown .rs-btn {
+    padding: 9px 11px !important;
+    font-size: 12px !important;
+    min-height: 42px !important;
+    height: 42px !important;
+  }
+
+  .rsuite-dropdown .rs-dropdown-item,
+  .rs-picker-popup .rs-dropdown-item {
+    padding: 5px 10px !important;
+    font-size: 12px !important;
   }
 }

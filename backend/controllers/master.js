@@ -14,7 +14,7 @@ exports.createMaster = async (req, res) => {
       igst: req.body.igst || '',
       sgst: req.body.sgst || '',
       costPerItem: req.body.costPerItem || '',
-      unit: req.body.unit || '',
+      unit: req.body.unit || 'EA',
       createdBy: req.user ? req.user.uid : null
     };
 

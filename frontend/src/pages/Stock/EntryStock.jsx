@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import Navbar from '../../components/Navbar';
+import { Dropdown } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
+import { StockEntryStatus } from '../../components/popup';
 import '../../styles/pageStyles/Stock/EntryStock.css';
 
 const EntryStock = () => {
@@ -24,6 +27,7 @@ const EntryStock = () => {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [loadingBalance, setLoadingBalance] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   // Store the original decimal value when switching between units
   const [originalQuantity, setOriginalQuantity] = useState('');
@@ -155,6 +159,13 @@ const EntryStock = () => {
       return;
     }
 
+    // Validate material has required fields
+    if (!material.materialCode || !material.materialName) {
+      alert('Material data is incomplete. Missing required fields: materialCode or materialName.');
+      console.error('Incomplete material data:', material);
+      return;
+    }
+
     setShowRequiredError(false);
 
     // Check for insufficient stock on Debit
@@ -163,20 +174,27 @@ const EntryStock = () => {
       return;
     }
 
-    // Prepare entry data
+    // Prepare entry data - ensure all required fields have values
     const entryData = {
       materialCode: material.materialCode,
       materialName: material.materialName,
-      supplierCode: material.supplierCode,
-      materialFlow: material.materialFlow,
+      supplierCode: material.supplierCode || '',
+      materialFlow: material.materialFlow || '',
       quantity: parseFloat(formData.quantity),
-      unit: material.unit,
-      entryType: formData.entryType,
-      timestamp: new Date().toISOString()
+      unit: material.unit || 'EA',
+      entryType: formData.entryType
     };
+
+    console.log('Submitting entry data:', entryData);
 
     try {
       const token = localStorage.getItem('token');
+      
+      if (!token) {
+        alert('Authentication token not found. Please log in again.');
+        return;
+      }
+
       const response = await fetch('http://localhost:5000/api/stock/entry', {
         method: 'POST',
         headers: {
@@ -186,16 +204,27 @@ const EntryStock = () => {
         body: JSON.stringify(entryData)
       });
 
+      const result = await response.json();
+      console.log('Server response:', result);
+
       if (response.ok) {
-        alert('Stock entry created successfully!');
-        navigate('/stock/entry');
+        setShowSuccessPopup(true);
+        
+        // Auto-hide popup after 2.5 seconds and navigate
+        setTimeout(() => {
+          setShowSuccessPopup(false);
+          navigate('/stock/entry');
+        }, 2500);
       } else {
-        const error = await response.json();
-        alert(`Failed to create stock entry: ${error.message || 'Unknown error'}`);
+        console.error('Error response:', result);
+        const errorMsg = result.message || 'Unknown error';
+        const requiredFields = result.required ? `\nRequired fields: ${result.required.join(', ')}` : '';
+        const errorDetails = result.error ? `\nDetails: ${result.error}` : '';
+        alert(`Failed to create stock entry: ${errorMsg}${requiredFields}${errorDetails}`);
       }
     } catch (error) {
       console.error('Error creating stock entry:', error);
-      alert('An error occurred while creating stock entry');
+      alert('An error occurred while creating stock entry. Check console for details.');
     }
   };
 
@@ -268,33 +297,43 @@ const EntryStock = () => {
 
                 <div className="es-form-row">
                   <div className="es-form-group">
-                    <label htmlFor="quantity">Quantity ({material.unit === 'EA' ? 'EA (Each)' : material.unit === 'KG' ? 'KG (Kilogram)' : material.unit === 'M' ? 'M (Meter)' : 'units'}) <span className="es-required">*</span></label>
-                    <input
-                      type="text"
-                      id="quantity"
-                      name="quantity"
-                      value={formData.quantity}
-                      onChange={handleChange}
-                      placeholder="Enter quantity"
-                      required
-                      className={`${errors.quantity ? 'es-error-input' : ''}`}
-                    />
+                    <label htmlFor="quantity">Quantity <span className="es-required">*</span></label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <input
+                        type="text"
+                        id="quantity"
+                        name="quantity"
+                        value={formData.quantity}
+                        onChange={handleChange}
+                        placeholder="Enter quantity"
+                        required
+                        className={`${errors.quantity ? 'es-error-input' : ''}`}
+                        style={{ flex: 1 }}
+                      />
+                      <div style={{
+                        padding: '12px 16px',
+                        color: 'black',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                        minWidth: '60px',
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {material.unit || 'Units'}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="es-form-group">
                     <label htmlFor="entryType">Entry Type <span className="es-required">*</span></label>
-                    <select
-                      id="entryType"
-                      name="entryType"
-                      value={formData.entryType}
-                      onChange={handleChange}
-                      required
-                      className={`${errors.entryType ? 'es-error-input' : ''}`}
+                    <Dropdown
+                      title={formData.entryType ? `${formData.entryType} (${formData.entryType === 'Credit' ? 'Stock In' : 'Stock Out'})` : "Select entry type"}
+                      onSelect={(value) => handleChange({ target: { name: 'entryType', value } })}
+                      className={`rsuite-dropdown ${errors.entryType ? 'es-error-input' : ''}`}
                     >
-                      <option value="" disabled hidden>Select entry type</option>
-                      <option value="Credit">Credit (Stock In)</option>
-                      <option value="Debit">Debit (Stock Out)</option>
-                    </select>
+                      <Dropdown.Item eventKey="Credit">Credit (Stock In)</Dropdown.Item>
+                      <Dropdown.Item eventKey="Debit">Debit (Stock Out)</Dropdown.Item>
+                    </Dropdown>
                   </div>
                 </div>
               </div>
@@ -331,6 +370,8 @@ const EntryStock = () => {
           </div>
         </div>
       </div>
+      
+      {showSuccessPopup && <StockEntryStatus />}
     </div>
   );
 };

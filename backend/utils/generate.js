@@ -12,7 +12,6 @@ const generateCredentials = (firstName, lastName, fatherName, dob) => {
 
     // --- 2. Generate Password ---
     // Logic: First 4 chars of Fathername + # + DOB Date (All Small)
-
     // Extract Day from DOB (Assuming YYYY-MM-DD format)
     // If dob is "1990-05-12", split gives ["1990", "05", "12"] -> take index 2
     const dobDate = dob ? dob.split('-')[2] : ""; 

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Navbar from '../../components/Navbar';
 import '../../styles/pageStyles/Stock/ChangeMaster.css';
 import { useNavigate } from 'react-router-dom';
 import { IndianRupee, Warehouse } from 'lucide-react';
+import { Dropdown } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
 
 const ChangeMaster = () => {
   const navigate = useNavigate();
@@ -538,16 +540,15 @@ const ChangeMaster = () => {
 
                       <div className="cm-form-group">
                         <label>Unit</label>
-                        <select
-                          name="unit"
-                          value={formData.unit}
-                          onChange={handleInputChange}
+                        <Dropdown
+                          title={formData.unit ? `${formData.unit} (${formData.unit === 'EA' ? 'Each' : formData.unit === 'KG' ? 'Kilogram' : 'Meter'})` : "Select unit"}
+                          onSelect={(value) => handleInputChange({ target: { name: 'unit', value } })}
+                          className="rsuite-dropdown"
                         >
-                          <option value="" disabled hidden>Select unit</option>
-                          <option value="EA">EA (Each)</option>
-                          <option value="KG">KG (Kilogram)</option>
-                          <option value="M">M (Meter)</option>
-                        </select>
+                          <Dropdown.Item eventKey="EA">EA (Each)</Dropdown.Item>
+                          <Dropdown.Item eventKey="KG">KG (Kilogram)</Dropdown.Item>
+                          <Dropdown.Item eventKey="M">M (Meter)</Dropdown.Item>
+                        </Dropdown>
                       </div>
                     </div>
                   </div>

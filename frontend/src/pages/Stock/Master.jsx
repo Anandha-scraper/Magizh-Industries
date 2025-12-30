@@ -10,7 +10,7 @@ const Master = ({ isAdmin = false }) => {
 
   const masterOptions = [
     {
-      title: 'Create Master',
+      title: 'Create Material',
       description: 'Create new material records',
       path: '/stock/create-master',
       icon: (
@@ -23,7 +23,7 @@ const Master = ({ isAdmin = false }) => {
       color: '#10b981'
     },
     {
-      title: 'Change Master',
+      title: 'Change Material',
       description: 'Modify existing material records',
       path: '/stock/change-master',
       icon: (
@@ -35,7 +35,7 @@ const Master = ({ isAdmin = false }) => {
       color: '#3b82f6'
     },
     {
-      title: 'Delete Master',
+      title: 'Delete Material',
       description: 'Remove material records',
       path: '/stock/delete-master',
       icon: (
@@ -54,7 +54,7 @@ const Master = ({ isAdmin = false }) => {
     <div className="master-wrapper">
       <Sidebar isAdmin={isAdmin} isExpanded={sidebarExpanded} onToggle={setSidebarExpanded} />
       <Navbar 
-        title="Master" 
+        title="Material Master Management" 
         onMenuClick={() => setSidebarExpanded(!sidebarExpanded)} 
         showCompanyName={sidebarExpanded}
       />

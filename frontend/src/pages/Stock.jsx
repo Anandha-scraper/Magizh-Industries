@@ -8,9 +8,13 @@ const Stock = ({ isAdmin = false }) => {
   const navigate = useNavigate();
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
+  const handleMenuClick = () => {
+    setSidebarExpanded(!sidebarExpanded);
+  };
+
   const masterModules = [
     {
-      title: 'Master',
+      title: 'Material Master',
       description: 'Manage material master data',
       path: '/stock/master',
       icon: (
@@ -51,26 +55,14 @@ const Stock = ({ isAdmin = false }) => {
           <line x1="6" y1="20" x2="6" y2="14"></line>
         </svg>
       )
-    },
-    {
-      title: 'Dispatch',
-      description: 'Stock dispatch and delivery',
-      path: '/stock/dispatch',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="1" y="3" width="15" height="13"></rect>
-          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-          <circle cx="5.5" cy="18.5" r="2.5"></circle>
-          <circle cx="18.5" cy="18.5" r="2.5"></circle>
-        </svg>
-      )
     }
+
   ];
 
   return (
     <div className="stock-container">
       <Sidebar isAdmin={isAdmin} isExpanded={sidebarExpanded} onToggle={setSidebarExpanded} />
-      <Navbar title="Stock Management" onMenuClick={() => setSidebarExpanded(!sidebarExpanded)} showCompanyName={sidebarExpanded} />
+      <Navbar title="Stock Management" onMenuClick={handleMenuClick} showCompanyName={sidebarExpanded} />
 
       <div className="main-content page-with-navbar">
         <div className="content-wrapper">
