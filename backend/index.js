@@ -24,14 +24,14 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// API Routes
-app.use('/api/auth', signupRoutes);
-app.use('/api/auth', loginRoutes);
-app.use('/api/auth', approvalRoutes);
-app.use('/api/auth', userRoutes);
-app.use('/api/master', masterRoutes);
-app.use('/api/archive', archiveRoutes);
-app.use('/api/stock', stockEntryRoutes);
+// API Routes - No /api prefix needed (already in Cloud Function URL)
+app.use('/auth', signupRoutes);
+app.use('/auth', loginRoutes);
+app.use('/auth', approvalRoutes);
+app.use('/auth', userRoutes);
+app.use('/master', masterRoutes);
+app.use('/archive', archiveRoutes);
+app.use('/stock', stockEntryRoutes);
 
 // Root Route (for testing)
 app.get('/', (req, res) => {
