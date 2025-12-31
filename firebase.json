@@ -27,7 +27,7 @@
         "npm --prefix backend install"
       ],
       "source": "backend",
-      "runtime": "nodejs18"
+      "runtime": "nodejs20"
     }
   ],
   "emulators": {
