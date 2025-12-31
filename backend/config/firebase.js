@@ -5,7 +5,10 @@ require('dotenv').config();
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   if (process.env.NODE_ENV === 'production') {
-    admin.initializeApp();
+    // Production: Use default credentials with explicit project ID
+    admin.initializeApp({
+      projectId: 'magizh-industries-d36e0'
+    });
   } else {
     // Development: Use service account key
     const serviceAccount = require(path.join(__dirname, 'serviceAccountKey.json'));
