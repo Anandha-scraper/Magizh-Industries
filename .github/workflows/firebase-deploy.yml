@@ -54,7 +54,7 @@ jobs:
         working-directory: ./frontend
         run: |
           cat << EOF > .env
-          VITE_API_URL=${{ secrets.VITE_API_URL }}
+          VITE_API_URL=https://us-central1-magizh-industries-d36e0.cloudfunctions.net/api
           EOF
 
       # Build Frontend

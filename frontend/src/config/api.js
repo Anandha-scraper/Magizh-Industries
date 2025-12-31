@@ -1,7 +1,7 @@
 const getApiBaseUrl = () => {
   // Use environment variable for production API URL
   if (import.meta.env.PROD) {
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://us-central1-magizh-industries-d36e0.cloudfunctions.net';
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://us-central1-magizh-industries-d36e0.cloudfunctions.net/api';
     console.log('🔥 Production API URL:', apiUrl);
     return apiUrl;
   }
