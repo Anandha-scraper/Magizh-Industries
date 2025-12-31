@@ -1,6 +1,7 @@
 const getApiBaseUrl = () => {
+  // Use environment variable for production API URL
   if (import.meta.env.PROD) {
-    return 'https://magizh-industries--magizh-industries-d36e0.europe-west4.hosted.app';
+    return import.meta.env.VITE_API_URL || 'https://us-central1-your-project-id.cloudfunctions.net/api';
   }
   return 'http://localhost:5000';
 };

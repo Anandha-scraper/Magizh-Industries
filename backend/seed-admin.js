@@ -1,7 +1,6 @@
 // Usage: node seed-admin.js
-const { db } = require('./config/firebase');
+const { db, auth } = require('./config/firebase');
 const { generateCredentials } = require('./utils/generate');
-const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 async function seedAdmin() {
@@ -39,14 +38,20 @@ async function seedAdmin() {
     }
 
     // Show generated credentials for new admin
-    console.log('  Generated Credentials:');
+    console.log('📋 Generated Credentials:');
     console.log(`   UserId: ${generatedUserId}`);
     console.log(`   Password: ${generatedPassword}\n`);
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+    // Step 1: Create user in Firebase Authentication
+    console.log('Creating user in Firebase Auth...');
+    const userRecord = await auth.createUser({
+      email: email,
+      password: generatedPassword,
+      displayName: `${firstName} ${lastName}`
+    });
 
-    // Create admin user document
+    // Step 2: Create admin user document in Firestore
+    console.log('Creating user profile in Firestore...');
     const adminData = {
       firstName,
       lastName,
@@ -54,15 +59,14 @@ async function seedAdmin() {
       dob,
       email,
       userId: generatedUserId,
-      password: hashedPassword,
       role: 'admin',
       isActive: true,
       createdAt: new Date().toISOString(),
       approvedAt: new Date().toISOString()
     };
 
-    // Add to Firestore
-    await db.collection('users').add(adminData);
+    // Add to Firestore using the Auth UID as document ID
+    await db.collection('users').doc(userRecord.uid).set(adminData);
 
     console.log('✅ Admin seeded successfully!\n');
 
