@@ -1,14 +1,16 @@
 // backend/utils/mailer.js
 const nodemailer = require('nodemailer');
+const functions = require('firebase-functions');
 require('dotenv').config();
 
 // Create transporter for sending emails
 const createTransporter = () => {
+  const config = functions.config();
   return nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE || 'gmail',
+    service: process.env.EMAIL_SERVICE || (config.email && config.email.service) || 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
+      user: process.env.EMAIL_USER || (config.email && config.email.user),
+      pass: process.env.EMAIL_PASSWORD || (config.email && config.email.password)
     }
   });
 };

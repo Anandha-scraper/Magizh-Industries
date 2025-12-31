@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
+const functions = require('firebase-functions');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const getJWTSecret = () => {
+  return process.env.JWT_SECRET || 
+         (functions.config().jwt && functions.config().jwt.secret) ||
+         'your-secret-key-change-in-production';
+};
+
+const JWT_SECRET = getJWTSecret();
 const JWT_EXPIRES_IN = '7d'; // Token expires in 7 days
 
 // Generate JWT token for user
