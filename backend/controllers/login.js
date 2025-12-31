@@ -47,11 +47,21 @@ exports.login = async (req, res) => {
     }
 
     // Step 3: Verify password using Firebase REST API
-    const firebaseApiKey = process.env.FIREBASE_API_KEY || 
-                          process.env.REACT_APP_FIREBASE_API_KEY ||
-                          functions.config().app?.firebase_api_key;
+    let firebaseApiKey = process.env.FIREBASE_API_KEY || 
+                         process.env.REACT_APP_FIREBASE_API_KEY;
+    
+    // Fallback to Firebase Functions config
+    if (!firebaseApiKey) {
+      try {
+        const config = functions.config();
+        firebaseApiKey = config.app && config.app.firebase_api_key;
+      } catch (e) {
+        console.log('Could not read functions.config():', e.message);
+      }
+    }
 
     if (!firebaseApiKey) {
+      console.error('Firebase API key not configured in env or functions.config()');
       throw new Error('Firebase API key not configured');
     }
 
