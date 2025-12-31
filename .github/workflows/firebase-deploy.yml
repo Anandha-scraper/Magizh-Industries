@@ -86,9 +86,9 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ./service-account.json
 
-      # Set Function Environment Variables (Optional - only if secrets are configured)
+      # Set Function Environment Variables (Optional)
       - name: Set Cloud Functions Environment Variables
-        if: ${{ secrets.JWT_SECRET != '' }}
+        continue-on-error: true
         run: |
           firebase functions:config:set \
             jwt.secret="${{ secrets.JWT_SECRET }}" \
