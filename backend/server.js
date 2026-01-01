@@ -59,74 +59,67 @@ if (isProduction) {
   });
 }
 
-// Use PORT from environment (Firebase App Hosting injects this)
+// Use PORT from environment (Firebase App Hosting/Cloud Run injects this)
 const PORT = process.env.PORT || 5000;
+const isCloudRun = process.env.K_SERVICE !== undefined;
 
-// Function to kill process on port
-const killPort = (port) => {
-  return new Promise((resolve) => {
-    const isWindows = process.platform === 'win32';
-
-    if (isWindows) {
-      exec(`netstat -ano | findstr :${port}`, (error, stdout) => {
-        if (stdout) {
-          const lines = stdout.trim().split('\n');
-          const pids = new Set();
-
-          lines.forEach(line => {
-            const parts = line.trim().split(/\s+/);
-            const pid = parts[parts.length - 1];
-            if (pid && pid !== '0' && !isNaN(pid)) {
-              pids.add(pid);
-            }
-          });
-
-          if (pids.size > 0) {
-            console.log(` Killing existing process on port ${port}...`);
-            pids.forEach(pid => {
-              exec(`taskkill /PID ${pid} /F`, () => {});
+// Start server
+if (isCloudRun) {
+  // Cloud Run - Simple startup, listen on 0.0.0.0
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'production'}`);
+    console.log(`Running on Cloud Run`);
+  });
+} else {
+  // Local development - with port killing for convenience
+  const killPort = (port) => {
+    return new Promise((resolve) => {
+      const isWindows = process.platform === 'win32';
+      if (isWindows) {
+        exec(`netstat -ano | findstr :${port}`, (error, stdout) => {
+          if (stdout) {
+            const lines = stdout.trim().split('\n');
+            const pids = new Set();
+            lines.forEach(line => {
+              const parts = line.trim().split(/\s+/);
+              const pid = parts[parts.length - 1];
+              if (pid && pid !== '0' && !isNaN(pid)) {
+                pids.add(pid);
+              }
             });
-            setTimeout(resolve, 1000);
+            if (pids.size > 0) {
+              console.log(`Killing existing process on port ${port}...`);
+              pids.forEach(pid => {
+                exec(`taskkill /PID ${pid} /F`, () => {});
+              });
+              setTimeout(resolve, 1000);
+            } else {
+              resolve();
+            }
           } else {
             resolve();
           }
-        } else {
-          resolve();
-        }
-      });
-    } else {
-      exec(`lsof -ti:${port}`, (error, stdout) => {
-        if (stdout) {
-          console.log(`Killing existing process on port ${port}...`);
-          exec(`kill -9 ${stdout.trim()}`, () => {
-            setTimeout(resolve, 1000);
-          });
-        } else {
-          resolve();
-        }
-      });
-    }
-  });
-};
-
-// Start server with auto-kill
-killPort(PORT).then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Local: http://localhost:${PORT}`);
-  }).on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.error(`port ${PORT} is still in use. Retrying...`);
-      setTimeout(() => {
-        killPort(PORT).then(() => {
-          app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-            console.log(`Local: http://localhost:${PORT}`);
-          });
         });
-      }, 2000);
-    } else {
-      console.error('Server error:', err);
-    }
+      } else {
+        exec(`lsof -ti:${port}`, (error, stdout) => {
+          if (stdout) {
+            console.log(`Killing existing process on port ${port}...`);
+            exec(`kill -9 ${stdout.trim()}`, () => {
+              setTimeout(resolve, 1000);
+            });
+          } else {
+            resolve();
+          }
+        });
+      }
+    });
+  };
+
+  killPort(PORT).then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`Local: http://localhost:${PORT}`);
+    });
   });
-});
+}
