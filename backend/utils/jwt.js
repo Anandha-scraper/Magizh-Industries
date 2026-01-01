@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
-const functions = require('firebase-functions');
 
 const getJWTSecret = () => {
-  return process.env.JWT_SECRET || 
-         (functions.config().jwt && functions.config().jwt.secret) ||
-         'your-secret-key-change-in-production';
+  // For Cloud Run/App Hosting, JWT_SECRET comes from Secret Manager via apphosting.yaml
+  // For local dev, it comes from .env file
+  return process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 };
 
 const JWT_SECRET = getJWTSecret();

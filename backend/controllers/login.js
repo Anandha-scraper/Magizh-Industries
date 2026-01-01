@@ -4,7 +4,6 @@ const { auth } = require('../config/firebase');
 const { generateToken } = require('../utils/jwt');
 const UserService = require('../services/User');
 const loginActivityService = require('../services/loginActivityService');
-const functions = require('firebase-functions');
 
 /**
  * Login user with Firebase Authentication
@@ -47,23 +46,11 @@ exports.login = async (req, res) => {
     }
 
     // Step 3: Verify password using Firebase REST API
-    let firebaseApiKey = process.env.FIREBASE_API_KEY || 
+    const firebaseApiKey = process.env.FIREBASE_API_KEY || 
                          process.env.REACT_APP_FIREBASE_API_KEY;
-    
-    // Fallback to Firebase Functions config
-    if (!firebaseApiKey) {
-      try {
-        const config = functions.config();
-        firebaseApiKey = (config.app && config.app.firebase_api_key) ||
-                        (config.email && config.email.firebase_api_key);
-        console.log('Using Firebase API key from functions.config()');
-      } catch (e) {
-        console.log('Could not read functions.config():', e.message);
-      }
-    }
 
     if (!firebaseApiKey) {
-      console.error('Firebase API key not configured in env or functions.config()');
+      console.error('Firebase API key not configured in environment');
       throw new Error('Firebase API key not configured');
     }
 

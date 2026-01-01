@@ -1,16 +1,13 @@
 // backend/utils/mailer.js
 const nodemailer = require('nodemailer');
-const functions = require('firebase-functions');
-require('dotenv').config();
 
 // Create transporter for sending emails
 const createTransporter = () => {
-  const config = functions.config();
   return nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE || (config.email && config.email.service) || 'gmail',
+    service: process.env.EMAIL_SERVICE || 'gmail',
     auth: {
-      user: process.env.EMAIL_USER || (config.email && config.email.user),
-      pass: process.env.EMAIL_PASSWORD || (config.email && config.email.password)
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
 };
@@ -18,10 +15,9 @@ const createTransporter = () => {
 // Send email notification to admin when new registration request is submitted
 const sendEmailToAdmin = async ({ requestId, firstName, lastName, email }) => {
   try {
-    const config = functions.config();
-    const emailUser = process.env.EMAIL_USER || (config.email && config.email.user);
-    const emailPassword = process.env.EMAIL_PASSWORD || (config.email && config.email.password);
-    const adminEmail = process.env.ADMIN_EMAIL || (config.email && config.email.admin);
+    const emailUser = process.env.EMAIL_USER;
+    const emailPassword = process.env.EMAIL_PASSWORD;
+    const adminEmail = process.env.ADMIN_EMAIL;
     
     // Skip if email is not configured
     if (!emailUser || !emailPassword) {
@@ -116,9 +112,8 @@ const sendEmailToAdmin = async ({ requestId, firstName, lastName, email }) => {
 // Send credentials email to user after approval
 const sendCredentialsEmail = async ({ email, firstName, userId, password }) => {
   try {
-    const config = functions.config();
-    const emailUser = process.env.EMAIL_USER || (config.email && config.email.user);
-    const emailPassword = process.env.EMAIL_PASSWORD || (config.email && config.email.password);
+    const emailUser = process.env.EMAIL_USER;
+    const emailPassword = process.env.EMAIL_PASSWORD;
     
     // Skip if email is not configured
     if (!emailUser || !emailPassword) {
