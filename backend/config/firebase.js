@@ -1,6 +1,14 @@
 const admin = require('firebase-admin');
 const path = require('path');
-require('dotenv').config();
+
+// Load dotenv only in local development
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    require('dotenv').config();
+  } catch (error) {
+    // dotenv not installed, skip it (Cloud Run doesn't need it)
+  }
+}
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
