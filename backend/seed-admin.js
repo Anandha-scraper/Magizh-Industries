@@ -1,88 +1,77 @@
-// Usage: node seed-admin.js
-const { db, auth } = require('./config/firebase');
-const { generateCredentials } = require('./utils/generate');
 require('dotenv').config();
+const { db, auth } = require('./config/firebase');
+const bcrypt = require('bcryptjs');
+
+const adminData = {
+  email: process.env.ADMIN_EMAIL,
+  password: process.env.ADMIN_PASSWORD,
+  firstName: process.env.ADMIN_FIRST_NAME,
+  lastName: process.env.ADMIN_LAST_NAME,
+  fatherName: process.env.ADMIN_FATHER_NAME,
+  dob: process.env.ADMIN_DOB,
+  userId: process.env.ADMIN_USER_ID,
+  role: 'admin'
+};
 
 async function seedAdmin() {
   try {
-    console.log(' Seeding admin to Firebase Cloud...\n');
-
-    // Get admin details from .env
-    const firstName = process.env.ADMIN_FIRSTNAME;
-    const lastName = process.env.ADMIN_LASTNAME;
-    const fatherName = process.env.ADMIN_FATHERNAME;
-    const dob = process.env.ADMIN_DOB;
-    const email = process.env.ADMIN_EMAIL;
-
-    // Validate required fields
-    if (!firstName || !lastName || !fatherName || !dob || !email) {
-      throw new Error('Missing admin details in .env file.');
+    if (!adminData.email || !adminData.password || !adminData.firstName || !adminData.lastName || !adminData.userId) {
+      throw new Error('Missing required environment variables. Please set ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_FIRST_NAME, ADMIN_LAST_NAME, and ADMIN_USER_ID in .env file');
     }
 
-    // Generate credentials
-    const { generatedUserId, generatedPassword } = generateCredentials(
-      firstName,
-      lastName,
-      fatherName,
-      dob
-    );
-
-    // Check if admin already exists
-    const existingAdmin = await db.collection('users')
-      .where('userId', '==', generatedUserId)
-      .get();
-
-    if (!existingAdmin.empty) {
-      console.log('  Admin user found already\n');
-      return;
+    if (adminData.password.length < 6) {
+      throw new Error('ADMIN_PASSWORD must be at least 6 characters long');
     }
 
-    // Show generated credentials for new admin
-    console.log('📋 Generated Credentials:');
-    console.log(`   UserId: ${generatedUserId}`);
-    console.log(`   Password: ${generatedPassword}\n`);
+    let userRecord;
+    try {
+      userRecord = await auth.getUserByEmail(adminData.email);
+      const userDoc = await db.collection('users').doc(userRecord.uid).get();
+      if (userDoc.exists) {
+        console.log('Admin User already exists..');
+        return;
+      }
+    } catch (error) {
+      if (error.code !== 'auth/user-not-found') {
+        throw error;
+      }
+    }
 
-    // Step 1: Create user in Firebase Authentication
-    console.log('Creating user in Firebase Auth...');
-    const userRecord = await auth.createUser({
-      email: email,
-      password: generatedPassword,
-      displayName: `${firstName} ${lastName}`
-    });
+    if (!userRecord) {
+      userRecord = await auth.createUser({
+        email: adminData.email,
+        password: adminData.password,
+        displayName: `${adminData.firstName} ${adminData.lastName}`,
+        emailVerified: true
+      });
+    }
 
-    // Step 2: Create admin user document in Firestore
-    console.log('Creating user profile in Firestore...');
-    const adminData = {
-      firstName,
-      lastName,
-      fatherName,
-      dob,
-      email,
-      userId: generatedUserId,
+    const hashedPassword = await bcrypt.hash(adminData.password, 10);
+
+    await db.collection('users').doc(userRecord.uid).set({
+      firstName: adminData.firstName,
+      lastName: adminData.lastName,
+      fatherName: adminData.fatherName,
+      dob: adminData.dob,
+      email: adminData.email,
+      userId: adminData.userId,
+      password: hashedPassword,
       role: 'admin',
       isActive: true,
+      isApproved: true,
+      approvedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
-      approvedAt: new Date().toISOString()
-    };
+      updatedAt: new Date().toISOString()
+    });
 
-    // Add to Firestore using the Auth UID as document ID
-    await db.collection('users').doc(userRecord.uid).set(adminData);
-
-    console.log('✅ Admin seeded successfully!\n');
+    console.log('Admin Created with Admin Creds');
 
   } catch (error) {
-    console.error('Seeding failed:', error.message);
-    throw error;
+    console.error('Error:', error.message);
+    process.exit(1);
   }
+
+  process.exit(0);
 }
 
-// Run the seeder
-seedAdmin()
-  .then(() => {
-    console.log('Seeding complete!');
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-    process.exit(1);
-  });
+seedAdmin();

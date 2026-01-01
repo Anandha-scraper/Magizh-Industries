@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const dotenv = require('dotenv');
 const { exec } = require('child_process');
 dotenv.config();
@@ -19,7 +20,7 @@ const app = express();
 app.use(cors()); // Allow frontend to talk to backend
 app.use(express.json()); // Parse JSON bodies
 
-// API Routes
+// API Routes (must be defined BEFORE static file serving)
 app.use('/api/auth', signupRoutes);
 app.use('/api/auth', loginRoutes);
 app.use('/api/auth', approvalRoutes);
@@ -28,11 +29,37 @@ app.use('/api/master', masterRoutes);
 app.use('/api/archive', archiveRoutes);
 app.use('/api/stock', stockEntryRoutes);
 
-// Root Route (for testing)
-app.get('/', (req, res) => {
-  res.send('API is running...');
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString() 
+  });
 });
 
+// Serve static files from React build (production only)
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction) {
+  const distPath = path.join(__dirname, 'dist');
+  app.use(express.static(distPath));
+  
+  // SPA fallback - serve index.html for all non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+  console.log(`Serving static files from: ${distPath}`);
+} else {
+  // Development mode - just API
+  app.get('/', (req, res) => {
+    res.json({ 
+      message: 'Magizh Industries API - Development Mode',
+      apiEndpoints: ['/api/auth', '/api/master', '/api/archive', '/api/stock']
+    });
+  });
+}
+
+// Use PORT from environment (Firebase App Hosting injects this)
 const PORT = process.env.PORT || 5000;
 
 // Function to kill process on port

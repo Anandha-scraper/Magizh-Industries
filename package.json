@@ -1,0 +1,30 @@
+{
+  "name": "magizh-industries",
+  "version": "1.0.0",
+  "description": "Magizh Industries Full-Stack Application - Firebase App Hosting",
+  "main": "backend/server.js",
+  "scripts": {
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "install:all": "npm run install:frontend && npm run install:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "copy:dist": "node -e \"require('fs').cpSync('frontend/dist', 'backend/dist', {recursive: true, force: true})\"",
+    "build": "npm run build:frontend && npm run copy:dist",
+    "start": "cd backend && node server.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "postinstall": "npm run install:all"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "author": "Magizh Industries",
+  "license": "ISC",
+  "keywords": [
+    "firebase",
+    "app-hosting",
+    "react",
+    "express",
+    "nodejs"
+  ]
+}
