@@ -13,7 +13,7 @@ node_modules/
 dist/
 dist-ssr/
 build/
-backend/dist/
+# backend/dist/ is committed (contains production frontend build)
 
 # Firebase
 .firebase/
